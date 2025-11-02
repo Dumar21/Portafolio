@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Proyecto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 12px 24px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            color: #d4af37;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .back-button:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Header */
+        .project-header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .project-title {
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .meta-label {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+        }
+
+        .meta-value {
+            font-size: 1.1em;
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        /* Gallery */
+        .gallery-section {
+            margin-bottom: 50px;
+        }
+
+        .gallery-main {
+            width: 100%;
+            height: 500px;
+            background: #0a0a0a;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .thumbnail {
+            height: 100px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail:hover {
+            border-color: #d4af37;
+            transform: scale(1.05);
+        }
+
+        .thumbnail.active {
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .content-card {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #2d2d2d;
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .description {
+            line-height: 1.8;
+            color: #b0b0b0;
+            margin-bottom: 20px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .tag {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        /* Game Info */
+        .game-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-item {
+            background: rgba(212, 175, 55, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            margin-bottom: 10px;
+        }
+
+        .info-value {
+            font-size: 1.2em;
+            color: #ffffff;
+        }
+
+        .game-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .game-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .owner-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            margin-top: 10px;
+        }
+
+        .roblox-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .roblox-link:hover {
+            background: #ffffff;
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-title {
+                font-size: 2em;
+            }
+
+            .gallery-main {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">
+            ← Volver al Portafolio
+        </a>
+
+        <div class="project-header">
+            <h1 class="project-title" id="projectTitle">Cargando...</h1>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Rol</span>
+                    <span class="meta-value" id="projectRole">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Duración</span>
+                    <span class="meta-value" id="projectDuration">-</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Estado</span>
+                    <span class="meta-value">Completado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery -->
+        <div class="gallery-section">
+            <div class="gallery-main" id="galleryMain">
+                <img id="mainImage" src="" alt="Imagen principal">
+            </div>
+            <div class="gallery-thumbnails" id="galleryThumbnails"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-grid">
+            <div class="content-card">
+                <h2 class="card-title">Descripción del Proyecto</h2>
+                <div class="description" id="projectDescription"></div>
+                <div class="tags" id="projectTags"></div>
+            </div>
+
+            <div class="content-card">
+                <h2 class="card-title">Información del Juego</h2>
+                <div class="game-info" id="gameInfo"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obtener ID del proyecto de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = parseInt(urlParams.get('id'));
+
+        // Cargar datos del proyecto
+        const projects = JSON.parse(localStorage.getItem('portfolioProjects') || '[]');
+        const project = projects.find(p => p.id === projectId);
+
+        if (!project) {
+            document.body.innerHTML = '<div style="text-align: center; padding: 100px; color: #b0b0b0;">Proyecto no encontrado</div>';
+        } else {
+            loadProject(project);
+        }
+
+        async function loadProject(project) {
+            // Título y meta
+            document.getElementById('projectTitle').textContent = project.title;
+            document.getElementById('projectRole').textContent = project.role;
+            document.getElementById('projectDuration').textContent = project.duration;
+
+            // Descripción
+            document.getElementById('projectDescription').textContent = project.description;
+
+            // Tags
+            const tagsContainer = document.getElementById('projectTags');
+            project.tags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag';
+                tagEl.textContent = tag;
+                tagsContainer.appendChild(tagEl);
+            });
+
+            // Galería
+            loadGallery(project.images);
+
+            // Información del juego
+            await loadGameInfo(project);
+        }
+
+        function loadGallery(images) {
+            const mainImg = document.getElementById('mainImage');
+            const thumbnailsContainer = document.getElementById('galleryThumbnails');
+
+            if (images.length > 0) {
+                mainImg.src = images[0];
+            }
+
+            images.forEach((img, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'thumbnail' + (index === 0 ? ' active' : '');
+                thumb.innerHTML = `<img src="${img}" alt="Imagen ${index + 1}">`;
+                thumb.onclick = () => {
+                    mainImg.src = img;
+                    document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                };
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
+
+        async function loadGameInfo(project) {
+            const container = document.getElementById('gameInfo');
+
+            // Información del juego
+            if (project.gameId) {
+                const gameData = await fetchGameData(project.gameId);
+                if (gameData) {
+                    container.innerHTML += `
+                        <div class="info-item">
+                            <div class="info-label">Juego</div>
+                            <div class="info-value">${gameData.name || 'N/A'}</div>
+                            <div class="game-thumbnail">
+                                <img src="${gameData.thumbnail}" alt="Game thumbnail">
+                            </div>
+                            <a href="https://www.roblox.com/games/${project.gameId}" target="_blank" class="roblox-link">
+                                Ver en Roblox
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+
+            // Información del grupo/dueño
+            if (project.groupId) {
+                const groupData = await fetchGroupData(project.groupId);
+                if (groupData) {
+                    container.innerHTML += `
+                        <div class="info-item">
+                            <div class="info-label">Grupo</div>
+                            <div class="info-value">${groupData.name}</div>
+                            <img src="${groupData.emblem}" class="owner-avatar" alt="Group emblem">
+                        </div>
+                    `;
+                }
+            } else {
+                container.innerHTML += `
+                    <div class="info-item">
+                        <div class="info-label">Cliente</div>
+                        <div class="info-value">Proyecto Personal</div>
+                    </div>
+                `;
+            }
+        }
+
+        async function fetchGameData(gameId) {
+            try {
+                const response = await fetch(`https://games.roblox.com/v1/games?universeIds=${gameId}`);
+                const data = await response.json();
+                
+                const thumbResponse = await fetch(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${gameId}&size=512x512&format=Png`);
+                const thumbData = await thumbResponse.json();
+
+                if (data.data && data.data[0]) {
+                    return {
+                        name: data.data[0].name,
+                        thumbnail: thumbData.data[0]?.imageUrl || 'https://via.placeholder.com/200'
+                    };
+                }
+            } catch (error) {
+                console.error('Error fetching game data:', error);
+            }
+            return null;
+        }
+
+        async function fetchGroupData(groupId) {
+            try {
+                const response = await fetch(`https://groups.roblox.com/v1/groups/${groupId}`);
+                const data = await response.json();
+                
+                if (data) {
+                    return {
+                        name: data.name,
+                        emblem: data.emblemUrl || 'https://via.placeholder.com/80'
+                    };
+                }
+            } catch (error) {
+                console.error('Error fetching group data:', error);
+            }
+            return null;
+        }
+    </script>
+</body>
+</html>
