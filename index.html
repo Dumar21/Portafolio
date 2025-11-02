@@ -297,117 +297,111 @@ const projects = [
     }
 ];
 
-async function loadUserAvatar() {
-    const avatarImg = document.getElementById('userAvatar');
-    const fallback = "https://placehold.co/180x180/1a1a1a/FFFFFF?text=Avatar";
-
-    try {
-        const url = `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${CONFIG.robloxUserId}&size=180x180&format=Png&isCircular=false`;
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log("Respuesta Roblox:", data);
-
-        if (data.data && data.data[0] && data.data[0].imageUrl) {
-            avatarImg.src = data.data[0].imageUrl;
-            console.log("✅ Avatar cargado:", data.data[0].imageUrl);
-        } else {
-            console.warn("⚠️ No se encontró avatar válido");
-            avatarImg.src = fallback;
-        }
-    } catch (error) {
-        console.error("⚠️ Error cargando avatar:", error);
-        avatarImg.src = fallback;
-    }
-}
-
-async function loadGameThumbnail(gameId) {
-    try {
-        const response = await fetch(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${gameId}&size=512x512&format=Png`);
-        const data = await response.json();
-        if (data.data && data.data[0]) {
-            return data.data[0].imageUrl;
-        }
-    } catch (error) {
-        console.error('Error cargando thumbnail:', error);
-    }
-    return null;
-}
-
-function createImageCarousel(images, projectId) {
-    let currentIndex = 0;
-    const container = document.createElement('div');
-    container.className = 'project-image-container';
-    
-    images.forEach((src, index) => {
-        const img = document.createElement('img');
-        img.className = 'project-image';
-        img.src = src;
-        img.style.position = index === 0 ? 'relative' : 'absolute';
-        img.style.top = '0';
-        img.style.left = '0';
-        img.style.opacity = index === 0 ? '1' : '0';
-        container.appendChild(img);
-    });
-
-    if (images.length > 1) {
-        setInterval(() => {
-            const imgs = container.querySelectorAll('.project-image');
-            imgs[currentIndex].style.opacity = '0';
-            currentIndex = (currentIndex + 1) % images.length;
-            imgs[currentIndex].style.opacity = '1';
-        }, 120000);
-    }
-
-    return container;
-}
-
-async function renderProjects() {
-    const grid = document.getElementById('projectsGrid');
-    grid.innerHTML = '<div class="loading">Cargando proyectos...</div>';
-
-    for (let project of projects) {
-        if (project.gameId) {
-            const thumbnail = await loadGameThumbnail(project.gameId);
-            if (thumbnail) {
-                project.images.unshift(thumbnail);
+        async function loadUserAvatar() {
+            try {
+                const response = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${CONFIG.robloxUserId}&size=180x180&format=Png`);
+                const data = await response.json();
+                if (data.data && data.data[0]) {
+                    document.getElementById('userAvatar').src = data.data[0].imageUrl;
+                }
+            } catch (error) {
+                console.error('Error cargando avatar:', error);
             }
         }
-    }
 
-    grid.innerHTML = '';
+        // Cargar thumbnail de juego
+        async function loadGameThumbnail(gameId) {
+            try {
+                const response = await fetch(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${gameId}&size=512x512&format=Png`);
+                const data = await response.json();
+                if (data.data && data.data[0]) {
+                    return data.data[0].imageUrl;
+                }
+            } catch (error) {
+                console.error('Error cargando thumbnail:', error);
+            }
+            return null;
+        }
 
-    projects.forEach(project => {
-        const card = document.createElement('a');
-        card.className = 'project-card';
-        card.href = `project.html?id=${project.id}`;
-        
-        const imageContainer = createImageCarousel(project.images, project.id);
-        card.appendChild(imageContainer);
+        // Crear carrusel de imágenes
+        function createImageCarousel(images, projectId) {
+            let currentIndex = 0;
+            const container = document.createElement('div');
+            container.className = 'project-image-container';
+            
+            images.forEach((src, index) => {
+                const img = document.createElement('img');
+                img.className = 'project-image';
+                img.src = src;
+                img.style.position = index === 0 ? 'relative' : 'absolute';
+                img.style.top = '0';
+                img.style.left = '0';
+                img.style.opacity = index === 0 ? '1' : '0';
+                container.appendChild(img);
+            });
 
-        const info = document.createElement('div');
-        info.className = 'project-info';
-        info.innerHTML = `
-            <h3 class="project-title">${project.title}</h3>
-            <p class="project-brief">${project.brief}</p>
-            <div class="project-tags">
-                ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-            </div>
-        `;
-        card.appendChild(info);
+            if (images.length > 1) {
+                setInterval(() => {
+                    const imgs = container.querySelectorAll('.project-image');
+                    imgs[currentIndex].style.opacity = '0';
+                    currentIndex = (currentIndex + 1) % images.length;
+                    imgs[currentIndex].style.opacity = '1';
+                }, 120000); // 2 minutos
+            }
 
-        grid.appendChild(card);
-    });
+            return container;
+        }
 
-    document.getElementById('projectCount').textContent = projects.length;
-}
+        // Renderizar proyectos
+        async function renderProjects() {
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = '<div class="loading">Cargando proyectos...</div>';
 
-document.getElementById('userName').textContent = CONFIG.userName;
-document.getElementById('userBio').textContent = CONFIG.userBio;
-loadUserAvatar();
-renderProjects();
+            // Cargar thumbnails de juegos si están disponibles
+            for (let project of projects) {
+                if (project.gameId) {
+                    const thumbnail = await loadGameThumbnail(project.gameId);
+                    if (thumbnail) {
+                        project.images.unshift(thumbnail);
+                    }
+                }
+            }
 
-localStorage.setItem('portfolioProjects', JSON.stringify(projects));
-</script>
+            grid.innerHTML = '';
 
+            projects.forEach(project => {
+                const card = document.createElement('a');
+                card.className = 'project-card';
+                card.href = `project.html?id=${project.id}`;
+                
+                const imageContainer = createImageCarousel(project.images, project.id);
+                card.appendChild(imageContainer);
+
+                const info = document.createElement('div');
+                info.className = 'project-info';
+                info.innerHTML = `
+                    <h3 class="project-title">${project.title}</h3>
+                    <p class="project-brief">${project.brief}</p>
+                    <div class="project-tags">
+                        ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                card.appendChild(info);
+
+                grid.appendChild(card);
+            });
+
+            document.getElementById('projectCount').textContent = projects.length;
+        }
+
+        // Inicializar
+        document.getElementById('userName').textContent = CONFIG.userName;
+        document.getElementById('userBio').textContent = CONFIG.userBio;
+        loadUserAvatar();
+        renderProjects();
+
+        // Guardar proyectos en localStorage para la página de detalle
+        localStorage.setItem('portfolioProjects', JSON.stringify(projects));
+    </script>
 </body>
 </html>
